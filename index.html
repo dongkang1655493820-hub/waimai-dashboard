@@ -20,9 +20,7 @@ body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei
 .kpi .hint{font-size:11px;color:#aaa;margin-top:4px}
 .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .card h2{font-size:17px;margin-bottom:6px}
-.insight{background:#fffbe6;border-left:4px solid #faad14;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6}
-.insight.good{background:#f6ffed;border-color:#52c41a}
-.insight.bad{background:#fff1f0;border-color:#f5222d}
+.card .sub{font-size:12px;color:#999;margin-bottom:10px}
 .chart{width:100%;height:340px;margin:6px 0}
 .target{margin:12px 0}
 .target .t-head{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
@@ -36,16 +34,17 @@ th:first-child,td:first-child{text-align:left}
 th{background:#fafafa;color:#666;font-weight:600}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
 .dot-r{background:#f5222d}.dot-y{background:#faad14}.dot-g{background:#52c41a}
-.detail{display:block;margin-top:8px}
-.toggle{color:#1890ff;cursor:pointer;font-size:13px;margin-top:10px;display:inline-block}
-.toggle:hover{text-decoration:underline}
+.detail{margin-top:8px}
 .rank{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#f0f0f0;font-size:12px;font-weight:700}
 .rank-1{background:#ffd700;color:#fff}.rank-2{background:#c0c0c0;color:#fff}.rank-3{background:#cd7f32;color:#fff}
+.grade{display:inline-block;min-width:28px;height:28px;line-height:28px;text-align:center;border-radius:8px;font-weight:800;font-size:14px;color:#fff}
+.grade-A{background:#52c41a}.grade-B{background:#faad14}.grade-C{background:#f5222d}
+.legend{font-size:12px;color:#999;margin-top:8px}
 </style></head><body><div class="wrap">
 
 <div class="header">
 <h1>🏮 同庆楼外卖经营看板</h1>
-<p>数据日期 2026-10-08 ｜ 美团 + 淘闪 + 京东 ｜ 每日更新</p>
+<p>数据日期 2026-10-08 ｜ 美团外卖 + 淘宝闪购 + 京东外卖 ｜ 每日更新</p>
 </div>
 
 <div class="filter">
@@ -62,47 +61,47 @@ th{background:#fafafa;color:#666;font-weight:600}
 
 <div class="card">
 <h2>🎯 10月目标完成情况 <span style="font-size:12px;color:#999;font-weight:400">三平台实收合计</span></h2>
+<div class="sub">预估完成率 = 1-8日日均 × 31天 ÷ 月目标</div>
 <div id="targetBars"></div>
-<div class="insight" id="targetInsight"></div>
 </div>
 
 <div class="card">
 <h2>⭐ 差评率 <span style="font-size:12px;color:#999;font-weight:400">美团外卖+淘宝闪购 · 近30天</span></h2>
-<div class="insight" id="reviewInsight"></div>
+<div class="sub">差评率 = 差评数 ÷ 有效订单数 ｜ 美团差评=商品评分&lt;3 ｜ 淘闪差评=总体评分&lt;3</div>
 <div class="chart" id="chartReview"></div>
-<span class="toggle" onclick="toggle('reviewDetail',this)">▲ 收起明细</span>
-<div class="detail" id="reviewDetail"><table>
-<tr><th>门店</th><th>差评率</th><th>评价数</th><th>回复率</th></tr>
-<tbody id="reviewTable"></tbody></table></div>
+<div class="detail"><table>
+<tr><th>门店</th><th>负责人</th><th>评价数</th><th>差评率</th><th>回复率</th><th>评级</th></tr>
+<tbody id="reviewTable"></tbody></table>
+<div class="legend">评级标准：A 差评率&lt;0.5% ｜ B 0.5%~1% ｜ C ≥1%</div></div>
 </div>
 
 <div class="card">
 <h2>🍽️ 菜品质量 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 近7天</span></h2>
-<div class="insight" id="qualityInsight"></div>
+<div class="sub" id="qualitySummary"></div>
 <div class="chart" id="chartQuality" style="height:300px"></div>
-<span class="toggle" onclick="toggle('qualityDetail',this)">▲ 收起明细</span>
-<div class="detail" id="qualityDetail"><table>
-<tr><th>门店</th><th>质量分</th><th>评价</th></tr>
-<tbody id="qualityTable"></tbody></table></div>
+<div class="detail"><table>
+<tr><th>门店</th><th>负责人</th><th>质量分</th><th>评级</th></tr>
+<tbody id="qualityTable"></tbody></table>
+<div class="legend">评级标准：A ≥4.5分 ｜ B 4.3~4.5分 ｜ C &lt;4.3分</div></div>
 </div>
 
 <div class="card">
 <h2>🛡️ 食品安全 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 近7天</span></h2>
-<div class="insight" id="foodInsight"></div>
+<div class="sub" id="foodSummary"></div>
 <div class="chart" id="chartFood" style="height:300px"></div>
-<span class="toggle" onclick="toggle('foodDetail',this)">▲ 收起明细</span>
-<div class="detail" id="foodDetail"><table>
-<tr><th>门店</th><th>负反馈率</th><th>评价</th></tr>
-<tbody id="foodTable"></tbody></table></div>
+<div class="detail"><table>
+<tr><th>门店</th><th>负责人</th><th>负反馈率</th><th>评级</th></tr>
+<tbody id="foodTable"></tbody></table>
+<div class="legend">评级标准：A ≤10% ｜ B 10%~15% ｜ C &gt;15%</div></div>
 </div>
 
 <div class="card">
 <h2>🏪 昨日收入排行 <span style="font-size:12px;color:#999;font-weight:400">美团+淘闪+京东</span></h2>
 <div class="chart" id="chartStore" style="height:400px"></div>
-<span class="toggle" onclick="toggle('storeDetail',this)">▲ 收起明细</span>
-<div class="detail" id="storeDetail"><table>
-<tr><th></th><th>门店</th><th>实收</th><th>订单</th><th>到手率</th></tr>
-<tbody id="storeTable"></tbody></table></div>
+<div class="detail"><table>
+<tr><th></th><th>门店</th><th>负责人</th><th>实收</th><th>订单</th><th>到手率</th><th>评级</th></tr>
+<tbody id="storeTable"></tbody></table>
+<div class="legend">评级标准（到手率）：A ≥60% ｜ B 55%~60% ｜ C &lt;55%</div></div>
 </div>
 
 </div>
@@ -111,13 +110,6 @@ var DATA = {"stores": [{"店": "同庆楼南京建邺万达店", "收入": 8044.
 var charts = {};
 function shortName(s){ return s.replace("同庆楼",""); }
 function pct(x,d){ return (x*100).toFixed(d===undefined?2:d)+"%"; }
-function toggle(id, el){
-  var e = document.getElementById(id);
-  var show = e.style.display !== "block";
-  e.style.display = show ? "block" : "none";
-  el.textContent = (show ? "▲ 收起明细" : "▲ 收起明细");
-  for(var k in charts){ charts[k].resize(); }
-}
 function initChart(id){
   if(charts[id]) charts[id].dispose();
   charts[id] = echarts.init(document.getElementById(id));
@@ -126,11 +118,18 @@ function initChart(id){
 function barColor(v, bad, warn){
   return v >= bad ? "#f5222d" : v >= warn ? "#faad14" : "#52c41a";
 }
+function gradeBadge(g){
+  return '<span class="grade grade-'+g+'">'+g+'</span>';
+}
+/* 评级函数 */
+function gradeReview(r){ return r < 0.005 ? "A" : r < 0.01 ? "B" : "C"; }
+function gradeQuality(v){ return v >= 4.5 ? "A" : v >= 4.3 ? "B" : "C"; }
+function gradeFood(v){ return v <= 10 ? "A" : v <= 15 ? "B" : "C"; }
+function gradeStore(v){ return v >= 0.6 ? "A" : v >= 0.55 ? "B" : "C"; }
 
 function applyFilter(){
   var owner = document.getElementById("ownerFilter").value;
   var f = function(r){ return !owner || r.负责人 === owner; };
-  var scope = owner || "全部61家";
 
   /* KPI */
   var stores = DATA.stores.filter(f);
@@ -150,8 +149,8 @@ function applyFilter(){
     ["💰","昨日实收","¥"+Math.round(income).toLocaleString(),"美团+淘闪+京东"],
     ["📦","昨日订单",orders.toLocaleString()+"单","美团+淘闪+京东"],
     ["⭐","差评率",pct(diffRate),"美团+淘闪 · 近30天"],
-    ["🍽️","菜品质量",qAvg.toFixed(2)+"分","美团 · 近7天"],
-    ["🛡️","食安负反馈",fAvg.toFixed(1)+"%","近7天 · 越低越好"]
+    ["🍽️","菜品质量",qAvg.toFixed(2)+"分","美团 · 近7天 · 满分5分"],
+    ["🛡️","食安负反馈",fAvg.toFixed(1)+"%","美团 · 近7天"]
   ].map(function(k){
     return '<div class="kpi"><div class="icon">'+k[0]+'</div><div class="label">'+k[1]+'</div><div class="val">'+k[2]+'</div><div class="hint">'+k[3]+'</div></div>';
   }).join("");
@@ -168,23 +167,11 @@ function applyFilter(){
       +'<div class="bar"><div style="width:'+Math.min(t.rate*100,100)+'%;background:'+c+'"></div></div>'
       +'<div class="t-foot">月目标 ¥'+t.goal.toLocaleString()+' ｜ 已完成 ¥'+t.actual.toLocaleString()+'</div></div>';
   }).join("");
-  var worst = targets.slice().sort(function(a,b){return a.rate-b.rate;})[0];
-  document.getElementById("targetInsight").className = "insight bad";
-  document.getElementById("targetInsight").innerHTML = "⚠️ <b>"+worst.name+"</b> 进度最慢，预估完成仅 "+pct(worst.rate,1)+"，剩下"+(31-8)+"天要加油。";
 
-  /* 差评率 */
-  var rs = rs0.slice().sort(function(a,b){return b.差评率-a.差评率;});
-  var highBad = rs.filter(function(r){return r.差评率>=0.01;});
-  var ri = document.getElementById("reviewInsight");
-  if(highBad.length){
-    ri.className = "insight bad";
-    ri.innerHTML = "⚠️ <b>"+highBad.length+"家店</b>差评率超过1%："+highBad.slice(0,3).map(function(r){return shortName(r.店)+"("+pct(r.差评率)+")";}).join("、")+(highBad.length>3?"等":"")+"，请重点跟进。";
-  } else {
-    ri.className = "insight good";
-    ri.innerHTML = "✅ 很好！"+scope+"没有差评率超1%的门店，继续保持。";
-  }
+  /* 差评率：从好到差（升序） */
+  var rs = rs0.slice().sort(function(a,b){return a.差评率-b.差评率;});
   var c1 = initChart("chartReview");
-  var top10 = rs.slice(0,10);
+  var top10 = rs.slice().sort(function(a,b){return b.差评率-a.差评率;}).slice(0,10);
   c1.setOption({
     tooltip:{trigger:"axis",formatter:function(p){return p[0].name+"<br/>差评率 "+p[0].value+"%";}},
     xAxis:{type:"category",data:top10.map(function(r){return shortName(r.店);}),axisLabel:{rotate:30,fontSize:10,interval:0}},
@@ -196,63 +183,48 @@ function applyFilter(){
   });
   document.getElementById("reviewTable").innerHTML = rs.map(function(r){
     var dot = r.差评率>=0.01?"dot-r":r.差评率>=0.005?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+r.评价数+"</td><td>"+Math.round(r.回复率*100)+"%</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+r.评价数+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+Math.round(r.回复率*100)+"%</td><td>"+gradeBadge(gradeReview(r.差评率))+"</td></tr>";
   }).join("");
 
-  /* 质量分 */
-  var qs = DATA.quality.filter(f).slice().sort(function(a,b){return a.商品质量分-b.商品质量分;});
-  var qLow = qs.filter(function(r){return r.商品质量分<4.3;});
-  var qi = document.getElementById("qualityInsight");
-  if(qLow.length){
-    qi.className = "insight bad";
-    qi.innerHTML = "⚠️ <b>"+qLow.length+"家店</b>质量分低于4.3："+qLow.slice(0,3).map(function(r){return shortName(r.店)+"("+r.商品质量分.toFixed(2)+")";}).join("、")+(qLow.length>3?"等":"")+"，建议检查菜品出品。";
-  } else {
-    qi.className = "insight good";
-    qi.innerHTML = "✅ 菜品质量整体不错，"+scope+"平均 "+(qs.reduce(function(a,r){return a+r.商品质量分;},0)/qs.length).toFixed(2)+" 分。";
-  }
+  /* 质量分：从好到差（降序） */
+  var qs = DATA.quality.filter(f).slice().sort(function(a,b){return b.商品质量分-a.商品质量分;});
+  document.getElementById("qualitySummary").textContent = "共"+qs.length+"家 ｜ 平均 "+(qs.reduce(function(a,r){return a+r.商品质量分;},0)/qs.length).toFixed(2)+" 分";
   var c2 = initChart("chartQuality");
+  var qBot = qs.slice().sort(function(a,b){return a.商品质量分-b.商品质量分;}).slice(0,12);
   c2.setOption({
     tooltip:{trigger:"axis"},
-    xAxis:{type:"category",data:qs.slice(0,12).map(function(r){return shortName(r.店);}),axisLabel:{rotate:30,fontSize:10,interval:0}},
+    xAxis:{type:"category",data:qBot.map(function(r){return shortName(r.店);}),axisLabel:{rotate:30,fontSize:10,interval:0}},
     yAxis:{type:"value",min:3.5,max:5},
-    series:[{type:"bar",data:qs.slice(0,12).map(function(r){return r.商品质量分;}),
+    series:[{type:"bar",data:qBot.map(function(r){return r.商品质量分;}),
       itemStyle:{color:function(p){return p.value<4.3?"#f5222d":p.value<4.5?"#faad14":"#52c41a";}},
       label:{show:true,position:"top",fontSize:9}}],
     grid:{left:40,right:20,top:20,bottom:70}
   });
   document.getElementById("qualityTable").innerHTML = qs.map(function(r){
     var dot = r.商品质量分<4.3?"dot-r":r.商品质量分<4.5?"dot-y":"dot-g";
-    var tag = r.商品质量分<4.3?"待改进":r.商品质量分<4.5?"一般":"优秀";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td><b>"+r.商品质量分.toFixed(2)+"</b></td><td>"+tag+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.商品质量分.toFixed(2)+"</b></td><td>"+gradeBadge(gradeQuality(r.商品质量分))+"</td></tr>";
   }).join("");
 
-  /* 食安 */
-  var fs = DATA.foodsafe.filter(f).slice().sort(function(a,b){return b.食品安全负反馈率-a.食品安全负反馈率;});
-  var fHigh = fs.filter(function(r){return r.食品安全负反馈率>15;});
-  var fi = document.getElementById("foodInsight");
-  if(fHigh.length){
-    fi.className = "insight bad";
-    fi.innerHTML = "🚨 <b>"+fHigh.length+"家店</b>食安负反馈超15%："+fHigh.slice(0,3).map(function(r){return shortName(r.店)+"("+r.食品安全负反馈率.toFixed(1)+"%)";}).join("、")+(fHigh.length>3?"等":"")+"，请立即排查！";
-  } else {
-    fi.className = "insight good";
-    fi.innerHTML = "✅ 食品安全整体平稳，"+scope+"平均 "+(fs.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/fs.length).toFixed(1)+"% 。";
-  }
+  /* 食安：从好到差（升序） */
+  var fs = DATA.foodsafe.filter(f).slice().sort(function(a,b){return a.食品安全负反馈率-b.食品安全负反馈率;});
+  document.getElementById("foodSummary").textContent = "共"+fs.length+"家 ｜ 平均 "+(fs.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/fs.length).toFixed(1)+"%";
   var c3 = initChart("chartFood");
+  var fTop = fs.slice().sort(function(a,b){return b.食品安全负反馈率-a.食品安全负反馈率;}).slice(0,12);
   c3.setOption({
     tooltip:{trigger:"axis",formatter:function(p){return p[0].name+"<br/>"+p[0].value+"%";}},
-    xAxis:{type:"category",data:fs.slice(0,12).map(function(r){return shortName(r.店);}),axisLabel:{rotate:30,fontSize:10,interval:0}},
+    xAxis:{type:"category",data:fTop.map(function(r){return shortName(r.店);}),axisLabel:{rotate:30,fontSize:10,interval:0}},
     yAxis:{type:"value",axisLabel:{formatter:"{value}%"}},
-    series:[{type:"bar",data:fs.slice(0,12).map(function(r){return +r.食品安全负反馈率.toFixed(1);}),
+    series:[{type:"bar",data:fTop.map(function(r){return +r.食品安全负反馈率.toFixed(1);}),
       itemStyle:{color:function(p){return barColor(p.value,15,10);}},
       label:{show:true,position:"top",formatter:"{c}%",fontSize:9}}],
     grid:{left:40,right:20,top:20,bottom:70}
   });
   document.getElementById("foodTable").innerHTML = fs.map(function(r){
     var dot = r.食品安全负反馈率>15?"dot-r":r.食品安全负反馈率>10?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td><b>"+r.食品安全负反馈率.toFixed(1)+"%</b></td><td>"+(r.食品安全负反馈率>15?"重点关注":"正常")+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.食品安全负反馈率.toFixed(1)+"%</b></td><td>"+gradeBadge(gradeFood(r.食品安全负反馈率))+"</td></tr>";
   }).join("");
 
-  /* 门店排行 */
+  /* 门店排行：从好到差（实收降序） */
   var ss = stores.slice().sort(function(a,b){return b.收入-a.收入;});
   var c4 = initChart("chartStore");
   var top12 = ss.slice(0,12);
@@ -267,7 +239,7 @@ function applyFilter(){
   });
   document.getElementById("storeTable").innerHTML = ss.map(function(s,i){
     var rc = i<3?"rank-"+(i+1):"";
-    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td><b>¥"+Math.round(s.收入).toLocaleString()+"</b></td><td>"+s.订单+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td></tr>";
+    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td><b>¥"+Math.round(s.收入).toLocaleString()+"</b></td><td>"+s.订单+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td><td>"+gradeBadge(gradeStore(s.到手率))+"</td></tr>";
   }).join("");
 }
 

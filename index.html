@@ -92,7 +92,7 @@ function applyFilter(){
   }).join("");
 
   // 评价表（全部，按差评率降序）
-  var rs = rs0.sort(function(a,b){return b.差评率-a.差评率;});
+  var rs = rs0.sort(function(a,b){return a.差评率-b.差评率;});
   document.getElementById("reviewTable").innerHTML = rs.map(function(r){
     var cls = r.差评率 >= 0.01 ? "bad" : "";
     return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+r.评价数+"</td><td class='"+cls+"'>"+pct(r.差评率)+"</td><td>"+Math.round(r.回复率*100)+"%</td></tr>";
@@ -101,7 +101,7 @@ function applyFilter(){
   document.getElementById("reviewMeta").textContent = "口径："+DATA.reviewMeta.口径;
 
   // 质量分表（全部，按分数升序）
-  var qs = DATA.quality.filter(f).sort(function(a,b){return a.商品质量分-b.商品质量分;});
+  var qs = DATA.quality.filter(f).sort(function(a,b){return b.商品质量分-a.商品质量分;});
   document.getElementById("qualityTable").innerHTML = qs.map(function(r){
     var cls = r.商品质量分 < 4.3 ? "bad" : "";
     return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td class='"+cls+"'>"+r.商品质量分.toFixed(2)+"</td></tr>";
@@ -109,7 +109,7 @@ function applyFilter(){
   document.getElementById("qualitySummary").textContent = qs.length+"家店均值 "+(qs.reduce(function(a,r){return a+r.商品质量分;},0)/qs.length).toFixed(2);
 
   // 食安表（全部，按负反馈率降序）
-  var fs = DATA.foodsafe.filter(f).sort(function(a,b){return b.食品安全负反馈率-a.食品安全负反馈率;});
+  var fs = DATA.foodsafe.filter(f).sort(function(a,b){return a.食品安全负反馈率-b.食品安全负反馈率;});
   document.getElementById("foodTable").innerHTML = fs.map(function(r){
     var cls = r.食品安全负反馈率 > 15 ? "bad" : "";
     return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td class='"+cls+"'>"+r.食品安全负反馈率.toFixed(1)+"%</td></tr>";

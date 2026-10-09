@@ -146,6 +146,8 @@ function applyFilter(){
   var fAvg = (function(){var q=DATA.foodsafe.filter(f);return q.length?q.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/q.length:0;})();
 
   document.getElementById("kpis").innerHTML = [
+    ["📅","本月实收","¥1,681,211","10-01~10-08 · 三平台"],
+    ["📊","本月订单","48,788单","10-01~10-08 · 三平台"],
     ["💰","昨日实收","¥"+Math.round(income).toLocaleString(),"美团+淘闪+京东"],
     ["📦","昨日订单",orders.toLocaleString()+"单","美团+淘闪+京东"],
     ["⭐","差评率",pct(diffRate),"美团+淘闪 · 近30天"],

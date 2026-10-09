@@ -48,14 +48,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 </div>
 
 <div class="filter">
-<span>👤 负责人：</span>
-<select id="ownerFilter" onchange="applyFilter()">
-<option value="">全部</option>
-<option value="董康">董康</option>
-<option value="伍宇星">伍宇星</option>
-<option value="陈宝林">陈宝林</option>
-</select>
-<span style="margin-left:12px">🏙️ 城市：</span>
+<span>🏙️ 城市：</span>
 <select id="cityFilter" onchange="applyFilter()">
 <option value="">全部</option>
 <option value="合肥">合肥</option>
@@ -87,7 +80,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="sub">📐 公式：差评率 = 一二星差评数 ÷ 有效订单数（美团+淘闪）<br>美团一二星 = 商品评分&lt;3 ｜ 淘闪一二星 = 总体评分&lt;3 ｜ 评级：A类&lt;0.5%，B类0.5%~1%，C类≥1%</div>
 <div class="chart" id="chartReview"></div>
 <div class="detail"><table>
-<tr><th>门店</th><th>负责人</th><th>有效订单数</th><th>一二星差评数</th><th>差评率</th><th>回复率</th><th>差评率评级</th></tr>
+<tr><th>门店</th><th>有效订单数</th><th>一二星差评数</th><th>差评率</th><th>回复率</th><th>差评率评级</th></tr>
 <tbody id="reviewTable"></tbody></table>
 <div class="legend">评级标准：A类 差评率&lt;0.5% ｜ B类 0.5%~1% ｜ C类 ≥1%</div></div>
 </div>
@@ -97,7 +90,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="sub">📐 公式：近7天美团"商品质量分"的平均值（满分5分）｜ 评级：A类≥4.5，B类4.3~4.5，C类&lt;4.3</div><div class="sub" id="qualitySummary"></div>
 <div class="chart" id="chartQuality" style="height:300px"></div>
 <div class="detail"><table>
-<tr><th>门店</th><th>负责人</th><th>菜品质量分</th><th>菜品质量评级</th></tr>
+<tr><th>门店</th><th>菜品质量分</th><th>菜品质量评级</th></tr>
 <tbody id="qualityTable"></tbody></table>
 <div class="legend">评级标准：A类 ≥4.5分 ｜ B类 4.3~4.5分 ｜ C类 &lt;4.3分</div></div>
 </div>
@@ -107,7 +100,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="sub">📐 公式：近7天美团"食品安全负反馈率"的平均值 ｜ 评级：A类≤10%，B类10%~15%，C类&gt;15%</div><div class="sub" id="foodSummary"></div>
 <div class="chart" id="chartFood" style="height:300px"></div>
 <div class="detail"><table>
-<tr><th>门店</th><th>负责人</th><th>负反馈率</th><th>食安评级</th></tr>
+<tr><th>门店</th><th>负反馈率</th><th>食安评级</th></tr>
 <tbody id="foodTable"></tbody></table>
 <div class="legend">评级标准：A类 ≤10% ｜ B类 10%~15% ｜ C类 &gt;15%</div></div>
 </div>
@@ -117,7 +110,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="sub">📐 公式：问题类型按评价内容关键词匹配 ｜ 重复差评菜品指本月被≥2条差评点名的菜</div>
 <div class="chart" id="chartBadCat" style="height:220px"></div>
 <table>
-<thead><tr><th>门店</th><th>负责人</th><th>差评数</th><th>主要问题</th><th>被重复差评的菜</th></tr></thead>
+<thead><tr><th>门店</th><th>差评数</th><th>主要问题</th><th>被重复差评的菜</th></tr></thead>
 <tbody id="badStoreTable"></tbody></table>
 </div>
 
@@ -126,7 +119,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="sub">📐 公式：实收 = 美团营业收入 + 淘闪收入 + 京东收入 ｜ 到手率 = 实收 ÷ 营业额 ｜ 评级按到手率：A类≥60%，B类55%~60%，C类&lt;55%</div>
 <div class="chart" id="chartStore" style="height:400px"></div>
 <div class="detail"><table>
-<tr><th></th><th>门店</th><th>负责人</th><th>实收</th><th>订单</th><th>到手率</th><th>到手率评级</th></tr>
+<tr><th></th><th>门店</th><th>实收</th><th>订单</th><th>到手率</th><th>到手率评级</th></tr>
 <tbody id="storeTable"></tbody></table>
 <div class="legend">评级标准（到手率）：A类 ≥60% ｜ B类 55%~60% ｜ C类 &lt;55%</div></div>
 </div>
@@ -159,9 +152,8 @@ function gradeFood(v){ return v <= 10 ? "A" : v <= 15 ? "B" : "C"; }
 function gradeStore(v){ return v >= 0.6 ? "A" : v >= 0.55 ? "B" : "C"; }
 
 function applyFilter(){
-  var owner = document.getElementById("ownerFilter").value;
   var city = document.getElementById("cityFilter").value;
-  var f = function(r){ return (!owner || r.负责人 === owner) && (!city || r.城市 === city); };
+  var f = function(r){ return (!city || r.城市 === city); };
 
   /* KPI */
   var stores = DATA.stores.filter(f);
@@ -219,7 +211,7 @@ function applyFilter(){
   });
   document.getElementById("reviewTable").innerHTML = rs.map(function(r){
     var dot = r.差评率>=0.01?"dot-r":r.差评率>=0.005?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+fmtInt(r.有效订单数)+"</td><td>"+fmtInt(r.差评数)+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+Math.round(r.回复率*100)+"%</td><td>"+gradeBadge(gradeReview(r.差评率))+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+fmtInt(r.有效订单数)+"</td><td>"+fmtInt(r.差评数)+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+Math.round(r.回复率*100)+"%</td><td>"+gradeBadge(gradeReview(r.差评率))+"</td></tr>";
   }).join("");
 
   /* 质量分：从好到差（降序） */
@@ -238,7 +230,7 @@ function applyFilter(){
   });
   document.getElementById("qualityTable").innerHTML = qs.map(function(r){
     var dot = r.商品质量分<4.3?"dot-r":r.商品质量分<4.5?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.商品质量分.toFixed(2)+"</b></td><td>"+gradeBadge(gradeQuality(r.商品质量分))+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td><b>"+r.商品质量分.toFixed(2)+"</b></td><td>"+gradeBadge(gradeQuality(r.商品质量分))+"</td></tr>";
   }).join("");
 
   /* 食安：从好到差（升序） */
@@ -257,7 +249,7 @@ function applyFilter(){
   });
   document.getElementById("foodTable").innerHTML = fs.map(function(r){
     var dot = r.食品安全负反馈率>15?"dot-r":r.食品安全负反馈率>10?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.食品安全负反馈率.toFixed(1)+"%</b></td><td>"+gradeBadge(gradeFood(r.食品安全负反馈率))+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td><b>"+r.食品安全负反馈率.toFixed(1)+"%</b></td><td>"+gradeBadge(gradeFood(r.食品安全负反馈率))+"</td></tr>";
   }).join("");
 
   /* 门店排行：从好到差（实收降序） */
@@ -275,7 +267,7 @@ function applyFilter(){
   });
   document.getElementById("storeTable").innerHTML = ss.map(function(s,i){
     var rc = i<3?"rank-"+(i+1):"";
-    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td><b>¥"+Math.round(s.收入)+"</b></td><td>"+fmtInt(s.订单)+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td><td>"+gradeBadge(gradeStore(s.到手率))+"</td></tr>";
+    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td><b>¥"+Math.round(s.收入)+"</b></td><td>"+fmtInt(s.订单)+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td><td>"+gradeBadge(gradeStore(s.到手率))+"</td></tr>";
   }).join("");
 }
 
@@ -292,7 +284,7 @@ function applyFilter(){
   });
   var bs = DATA.badAnalysis.byStore.filter(f);
   document.getElementById("badStoreTable").innerHTML = bs.map(function(x){
-    return "<tr><td>"+shortName(x.店)+"</td><td>"+x.负责人+"</td><td>"+x.差评数+"</td><td>"+x.主要问题+"</td><td>"+x.重复菜品+"</td></tr>";
+    return "<tr><td>"+shortName(x.店)+"</td><td>"+x.差评数+"</td><td>"+x.主要问题+"</td><td>"+x.重复菜品+"</td></tr>";
   }).join("") || "<tr><td colspan=5 style='text-align:center;color:#999'>本月暂无差评</td></tr>";
 
 window.addEventListener("resize", function(){ for(var k in charts){ charts[k].resize(); } });

@@ -1,127 +1,254 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>同庆楼外卖经营看板</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f5f7;color:#1f2329;font-size:14px}}
-.wrap{{max-width:1280px;margin:0 auto;padding:20px 16px 40px}}
-.card{{background:#fff;border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}}
-.card h2{{font-size:15px;margin-bottom:12px}}
-.kpis{{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}}
-.kpi{{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}}
-.kpi .label{{font-size:12px;color:#646a73;margin-bottom:6px}}
-.kpi .val{{font-size:24px;font-weight:700}}
-table{{width:100%;border-collapse:collapse;font-size:13px}}
-th,td{{padding:8px;text-align:right;border-bottom:1px solid #f0f0f0}}
-th:first-child,td:first-child{{text-align:left}}
-th{{background:#fafafa}}
-.bad{{color:#cf1322}}.good{{color:#389e0d}}
-.filter{{margin-bottom:16px}}
-.filter select{{font-size:14px;padding:8px 12px;border-radius:8px;border:1px solid #ddd}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#f5f7fa 0%,#e8edf3 100%);color:#1f2329;font-size:14px;min-height:100vh}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 16px 48px}
+.header{background:linear-gradient(135deg,#1a3a5c 0%,#2d5a87 100%);border-radius:16px;padding:28px 32px;margin-bottom:20px;color:#fff;box-shadow:0 4px 20px rgba(26,58,92,.25)}
+.header h1{font-size:26px;font-weight:700;letter-spacing:1px}
+.header p{opacity:.75;font-size:12px;margin-top:8px}
+.filter{background:#fff;border-radius:12px;padding:14px 20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px}
+.filter label{font-weight:600;color:#4a5568}
+.filter select{font-size:14px;padding:8px 16px;border-radius:8px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:border .2s}
+.filter select:hover{border-color:#2d5a87}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:relative;overflow:hidden;transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.kpi:nth-child(1)::before{background:linear-gradient(90deg,#f6ad55,#ed8936)}
+.kpi:nth-child(2)::before{background:linear-gradient(90deg,#68d391,#38a169)}
+.kpi:nth-child(3)::before{background:linear-gradient(90deg,#fc8181,#e53e3e)}
+.kpi:nth-child(4)::before{background:linear-gradient(90deg,#63b3ed,#3182ce)}
+.kpi:nth-child(5)::before{background:linear-gradient(90deg,#d6bcfa,#805ad5)}
+.kpi .icon{font-size:22px;margin-bottom:8px}
+.kpi .label{font-size:12px;color:#718096;margin-bottom:6px}
+.kpi .val{font-size:26px;font-weight:800;color:#1a202c}
+.card{background:#fff;border-radius:14px;padding:20px 22px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .sub{font-size:12px;color:#a0aec0;margin-bottom:14px}
+.chart{width:100%;height:380px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{padding:10px 8px;text-align:right;border-bottom:1px solid #edf2f7}
+th:first-child,td:first-child{text-align:left}
+th{background:#f7fafc;font-weight:600;color:#4a5568;position:sticky;top:0}
+tr:hover td{background:#f7fafc}
+.bad{color:#e53e3e;font-weight:600}
+.good{color:#38a169;font-weight:600}
+.progress{height:8px;background:#edf2f7;border-radius:4px;overflow:hidden;margin-top:6px}
+.progress>div{height:100%;border-radius:4px;transition:width .5s}
+.target-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid #edf2f7}
+.target-row:last-child{border:none}
+.target-name{font-weight:700;min-width:70px;font-size:15px}
+.target-info{flex:1}
+.target-bar{height:10px;background:#edf2f7;border-radius:5px;overflow:hidden;margin:8px 0}
+.target-bar>div{height:100%;border-radius:5px}
+.target-num{font-size:12px;color:#718096}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-danger{background:#fed7d7;color:#c53030}
+.badge-warn{background:#feebc8;color:#c05621}
+.badge-ok{background:#c6f6d5;color:#276749}
 </style></head><body><div class="wrap">
-<h1>同庆楼外卖经营看板</h1>
-<p style="color:#888;font-size:12px;margin:8px 0 16px">数据日期 2026-10-08 ｜ 生成时间 2026-10-09</p>
+
+<div class="header">
+<h1>🏮 同庆楼外卖经营看板</h1>
+<p>数据日期 2026-10-08 ｜ 生成时间 2026-10-09 ｜ 美团 + 淘闪 + 京东</p>
+</div>
+
 <div class="filter">
-<label>负责人筛选：</label>
+<label>👤 负责人筛选：</label>
 <select id="ownerFilter" onchange="applyFilter()">
-<option value="">全部</option>
-<option value="董康">董康</option>
-<option value="伍宇星">伍宇星</option>
-<option value="陈宝林">陈宝林</option>
+<option value="">全部（61家）</option>
+<option value="董康">董康（22家）</option>
+<option value="伍宇星">伍宇星（21家）</option>
+<option value="陈宝林">陈宝林（18家）</option>
 </select>
 </div>
+
 <div class="kpis" id="kpis"></div>
-<div class="card"><h2>🎯 10月目标追踪（按负责人）</h2>
-<table><tr><th>负责人</th><th>月目标</th><th>1-8日实际</th><th>预估完成率</th></tr>
-<tr><td>董康</td><td>¥2,973,819</td><td>¥623,937</td><td class="bad">81.3%</td></tr>
-<tr><td>伍宇星</td><td>¥3,699,180</td><td>¥735,924</td><td class="bad">77.1%</td></tr>
-<tr><td>陈宝林</td><td>¥2,143,107</td><td>¥321,350</td><td class="bad">58.1%</td></tr>
-</table></div>
-<div class="card"><h2>⭐ 评价分析（近30天，美团+淘闪）</h2>
-<p id="reviewSummary"></p>
-<p style="font-size:12px;color:#888;margin-top:6px" id="reviewMeta"></p>
+
+<div class="card">
+<h2>🎯 10月目标追踪</h2>
+<div class="sub">按负责人大盘考核 ｜ 预估完成率 = 1-8日日均 × 31天 ÷ 月目标</div>
+<div id="targetBars"></div>
+</div>
+
+<div class="card">
+<h2>⭐ 评价分析</h2>
+<div class="sub" id="reviewMeta"></div>
+<div class="chart" id="chartReview"></div>
 <table><tr><th>门店</th><th>负责人</th><th>评价数</th><th>差评率</th><th>回复率</th></tr>
-<tbody id="reviewTable"></tbody></table></div>
-<div class="card"><h2>🍽️ 商品质量分（近7日，美团）</h2>
-<p id="qualitySummary"></p>
-<table><tr><th>门店</th><th>负责人</th><th>商品质量分</th></tr>
-<tbody id="qualityTable"></tbody></table></div>
-<div class="card"><h2>🛡️ 食品安全负反馈率（近7日，美团）</h2>
-<p id="foodSummary"></p>
-<table><tr><th>门店</th><th>负责人</th><th>负反馈率</th></tr>
-<tbody id="foodTable"></tbody></table></div>
-<div class="card"><h2>🏪 昨日实收排行</h2>
-<table><tr><th>门店</th><th>负责人</th><th>实收</th><th>订单</th><th>到手率</th></tr>
-<tbody id="storeTable"></tbody></table></div>
+<tbody id="reviewTable"></tbody></table>
+</div>
+
+<div class="card">
+<h2>🍽️ 商品质量分 <span style="font-size:12px;color:#a0aec0;font-weight:400">近7日 · 美团</span></h2>
+<div class="sub" id="qualitySummary"></div>
+<div class="chart" id="chartQuality" style="height:320px"></div>
+<table><tr><th>门店</th><th>负责人</th><th>商品质量分</th><th>状态</th></tr>
+<tbody id="qualityTable"></tbody></table>
+</div>
+
+<div class="card">
+<h2>🛡️ 食品安全负反馈率 <span style="font-size:12px;color:#a0aec0;font-weight:400">近7日 · 美团</span></h2>
+<div class="sub" id="foodSummary"></div>
+<div class="chart" id="chartFood" style="height:320px"></div>
+<table><tr><th>门店</th><th>负责人</th><th>负反馈率</th><th>状态</th></tr>
+<tbody id="foodTable"></tbody></table>
+</div>
+
+<div class="card">
+<h2>🏪 昨日实收排行</h2>
+<div class="sub">三平台合计</div>
+<div class="chart" id="chartStore"></div>
+<table><tr><th>#</th><th>门店</th><th>负责人</th><th>实收</th><th>订单</th><th>到手率</th></tr>
+<tbody id="storeTable"></tbody></table>
+</div>
+
 </div>
 <script>
 var DATA = {"stores": [{"店": "同庆楼南京建邺万达店", "收入": 8044.0, "订单": 229, "到手率": 0.5995, "负责人": "伍宇星"}, {"店": "同庆楼南京鼓楼店", "收入": 6216.2, "订单": 207, "到手率": 0.5724, "负责人": "伍宇星"}, {"店": "同庆楼南京国泰店", "收入": 6097.8, "订单": 178, "到手率": 0.5944, "负责人": "伍宇星"}, {"店": "同庆楼常州吾悦店", "收入": 5967.6, "订单": 164, "到手率": 0.5896, "负责人": "伍宇星"}, {"店": "同庆楼无锡茂业店", "收入": 5973.1, "订单": 183, "到手率": 0.5884, "负责人": "伍宇星"}, {"店": "同庆楼合肥庐州府店", "收入": 5823.0, "订单": 181, "到手率": 0.5809, "负责人": "董康"}, {"店": "同庆楼南京新华大厦店", "收入": 5428.9, "订单": 177, "到手率": 0.5967, "负责人": "伍宇星"}, {"店": "同庆楼合肥金屯店", "收入": 5062.0, "订单": 186, "到手率": 0.5686, "负责人": "陈宝林"}, {"店": "同庆楼北京大钟寺店", "收入": 5097.6, "订单": 140, "到手率": 0.6069, "负责人": "董康"}, {"店": "同庆楼无锡安镇店", "收入": 4984.8, "订单": 153, "到手率": 0.5871, "负责人": "伍宇星"}, {"店": "同庆楼无锡滨湖万达店", "收入": 4765.2, "订单": 137, "到手率": 0.5868, "负责人": "伍宇星"}, {"店": "同庆楼溧阳天目路店", "收入": 4773.3, "订单": 135, "到手率": 0.5751, "负责人": "伍宇星"}, {"店": "同庆楼合肥港汇店", "收入": 4604.9, "订单": 139, "到手率": 0.5923, "负责人": "董康"}, {"店": "同庆楼南京珠江路店", "收入": 4513.0, "订单": 135, "到手率": 0.5895, "负责人": "伍宇星"}, {"店": "同庆楼芜湖赭山西路店", "收入": 4540.2, "订单": 131, "到手率": 0.5965, "负责人": "董康"}, {"店": "同庆楼合肥凤阳路店", "收入": 4406.3, "订单": 161, "到手率": 0.5489, "负责人": "董康"}, {"店": "同庆楼合肥百大心悦城店", "收入": 4354.6, "订单": 139, "到手率": 0.5716, "负责人": "董康"}, {"店": "同庆楼无锡惠山万达店", "收入": 4335.6, "订单": 158, "到手率": 0.5569, "负责人": "伍宇星"}, {"店": "同庆楼合肥高新富茂店", "收入": 4227.6, "订单": 128, "到手率": 0.5811, "负责人": "陈宝林"}, {"店": "同庆楼南京尧佳路店", "收入": 3918.3, "订单": 124, "到手率": 0.5764, "负责人": "伍宇星"}, {"店": "同庆楼常州奥体店", "收入": 4010.3, "订单": 112, "到手率": 0.5861, "负责人": "伍宇星"}, {"店": "同庆楼北京金宝街店", "收入": 3583.7, "订单": 132, "到手率": 0.5526, "负责人": "董康"}, {"店": "同庆楼合肥铜冠富茂店", "收入": 3628.8, "订单": 129, "到手率": 0.5516, "负责人": "陈宝林"}, {"店": "同庆楼芜湖奥体店", "收入": 3487.9, "订单": 120, "到手率": 0.562, "负责人": "董康"}, {"店": "同庆楼合肥瑶海富茂店", "收入": 3592.0, "订单": 105, "到手率": 0.5714, "负责人": "陈宝林"}, {"店": "同庆楼合肥花园店", "收入": 3426.2, "订单": 96, "到手率": 0.5909, "负责人": "董康"}, {"店": "同庆楼安庆富茂店", "收入": 3355.7, "订单": 123, "到手率": 0.546, "负责人": "董康"}, {"店": "同庆楼合肥明珠富茂店", "收入": 3341.0, "订单": 115, "到手率": 0.5698, "负责人": "陈宝林"}, {"店": "同庆楼无锡江溪路店", "收入": 3220.4, "订单": 106, "到手率": 0.567, "负责人": "伍宇星"}, {"店": "同庆楼无锡华夏路店", "收入": 3188.5, "订单": 103, "到手率": 0.5845, "负责人": "陈宝林"}, {"店": "同庆楼合肥皖通店", "收入": 2952.4, "订单": 98, "到手率": 0.5724, "负责人": "董康"}, {"店": "同庆楼合肥马鞍山路店", "收入": 3028.1, "订单": 88, "到手率": 0.5943, "负责人": "董康"}, {"店": "同庆楼合肥北城富茂店", "收入": 3107.9, "订单": 67, "到手率": 0.7141, "负责人": "陈宝林"}, {"店": "同庆楼合肥天鹅万达店", "收入": 2761.0, "订单": 86, "到手率": 0.5795, "负责人": "董康"}, {"店": "同庆楼合肥长丰路店", "收入": 2681.0, "订单": 75, "到手率": 0.59, "负责人": "陈宝林"}, {"店": "同庆楼无锡哥伦布店", "收入": 2575.9, "订单": 98, "到手率": 0.5604, "负责人": "伍宇星"}, {"店": "同庆楼南京红山路店", "收入": 2468.1, "订单": 88, "到手率": 0.563, "负责人": "伍宇星"}, {"店": "同庆楼芜湖华强店", "收入": 2441.4, "订单": 78, "到手率": 0.5802, "负责人": "董康"}, {"店": "同庆楼无锡宝能店", "收入": 2369.9, "订单": 81, "到手率": 0.5691, "负责人": "伍宇星"}, {"店": "同庆楼合肥安高店", "收入": 2397.2, "订单": 84, "到手率": 0.5725, "负责人": "董康"}, {"店": "同庆楼合肥滨湖富茂店", "收入": 2266.4, "订单": 68, "到手率": 0.5829, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜陵路店", "收入": 2153.8, "订单": 77, "到手率": 0.5661, "负责人": "陈宝林"}, {"店": "同庆楼芜湖银湖店", "收入": 2036.0, "订单": 63, "到手率": 0.5681, "负责人": "董康"}, {"店": "同庆楼合肥包河万达店", "收入": 1769.4, "订单": 58, "到手率": 0.5626, "负责人": "董康"}, {"店": "同庆楼常州孟河店", "收入": 1777.5, "订单": 61, "到手率": 0.5702, "负责人": "伍宇星"}, {"店": "同庆楼句容1912店", "收入": 1570.8, "订单": 50, "到手率": 0.5725, "负责人": "伍宇星"}, {"店": "同庆楼安庆人民东路店", "收入": 1512.5, "订单": 44, "到手率": 0.5699, "负责人": "董康"}, {"店": "同庆楼合肥肥西富茂店", "收入": 1392.1, "订单": 45, "到手率": 0.5902, "负责人": "陈宝林"}, {"店": "同庆楼滁州悦达店", "收入": 1432.2, "订单": 49, "到手率": 0.5465, "负责人": "董康"}, {"店": "同庆楼合肥徽州府店", "收入": 1374.2, "订单": 50, "到手率": 0.5679, "负责人": "董康"}, {"店": "同庆楼合肥之心城店", "收入": 1511.0, "订单": 52, "到手率": 0.5674, "负责人": "陈宝林"}, {"店": "同庆楼淮北濉溪店", "收入": 1343.3, "订单": 46, "到手率": 0.5976, "负责人": "陈宝林"}, {"店": "同庆楼滁州富茂店", "收入": 1324.4, "订单": 51, "到手率": 0.5443, "负责人": "董康"}, {"店": "同庆楼肥东吾悦店", "收入": 1249.2, "订单": 49, "到手率": 0.568, "负责人": "陈宝林"}, {"店": "同庆楼阜阳双清湾店", "收入": 1130.2, "订单": 42, "到手率": 0.5732, "负责人": "陈宝林"}, {"店": "同庆楼安庆大南门店", "收入": 1091.8, "订单": 44, "到手率": 0.5519, "负责人": "董康"}, {"店": "帕丽斯无锡锡沪路店", "收入": 1024.6, "订单": 40, "到手率": 0.5651, "负责人": "伍宇星"}, {"店": "同庆楼阜阳富茂店", "收入": 892.4, "订单": 25, "到手率": 0.6758, "负责人": "陈宝林"}, {"店": "同庆楼上海富茂店", "收入": 853.7, "订单": 28, "到手率": 0.5463, "负责人": "陈宝林"}, {"店": "帕丽斯常州常青里店", "收入": 0.0, "订单": 0, "到手率": 0, "负责人": "伍宇星"}, {"店": "帕丽斯合肥奥莱店", "收入": 0.0, "订单": 0, "到手率": 0, "负责人": "陈宝林"}], "reviews": [{"店": "同庆楼合肥滨湖富茂店", "评价数": 79, "差评数": 26, "差评率": 0.0121, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼合肥之心城店", "评价数": 62, "差评数": 12, "差评率": 0.0072, "回复率": 0.7097, "负责人": "陈宝林"}, {"店": "同庆楼无锡江溪路店", "评价数": 117, "差评数": 25, "差评率": 0.0071, "回复率": 0.7692, "负责人": "伍宇星"}, {"店": "同庆楼合肥港汇店", "评价数": 113, "差评数": 28, "差评率": 0.007, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼肥东吾悦店", "评价数": 50, "差评数": 5, "差评率": 0.0065, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼合肥包河万达店", "评价数": 125, "差评数": 15, "差评率": 0.0064, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼芜湖华强店", "评价数": 141, "差评数": 16, "差评率": 0.0064, "回复率": 0.7305, "负责人": "董康"}, {"店": "同庆楼南京尧佳路店", "评价数": 162, "差评数": 29, "差评率": 0.0063, "回复率": 0.5309, "负责人": "伍宇星"}, {"店": "同庆楼常州孟河店", "评价数": 59, "差评数": 12, "差评率": 0.0062, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "帕丽斯常州常青里店", "评价数": 28, "差评数": 4, "差评率": 0.0059, "回复率": 0.5, "负责人": "伍宇星"}, {"店": "同庆楼芜湖银湖店", "评价数": 69, "差评数": 12, "差评率": 0.0055, "回复率": 0.9275, "负责人": "董康"}, {"店": "同庆楼安庆富茂店", "评价数": 187, "差评数": 23, "差评率": 0.0054, "回复率": 0.9786, "负责人": "董康"}, {"店": "同庆楼句容1912店", "评价数": 48, "差评数": 9, "差评率": 0.005, "回复率": 0.9167, "负责人": "伍宇星"}, {"店": "同庆楼淮北濉溪店", "评价数": 25, "差评数": 4, "差评率": 0.005, "回复率": 0.32, "负责人": "陈宝林"}, {"店": "同庆楼常州奥体店", "评价数": 85, "差评数": 18, "差评率": 0.0048, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼南京国泰店", "评价数": 128, "差评数": 21, "差评率": 0.0047, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥庐州府店", "评价数": 163, "差评数": 23, "差评率": 0.0047, "回复率": 0.9387, "负责人": "董康"}, {"店": "同庆楼合肥高新富茂店", "评价数": 117, "差评数": 13, "差评率": 0.0046, "回复率": 0.9915, "负责人": "陈宝林"}, {"店": "同庆楼合肥徽州府店", "评价数": 46, "差评数": 10, "差评率": 0.0045, "回复率": 0.5217, "负责人": "董康"}, {"店": "同庆楼南京红山路店", "评价数": 116, "差评数": 14, "差评率": 0.0044, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥安高店", "评价数": 169, "差评数": 10, "差评率": 0.0044, "回复率": 0.9822, "负责人": "董康"}, {"店": "同庆楼合肥凤阳路店", "评价数": 167, "差评数": 20, "差评率": 0.0043, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼安庆人民东路店", "评价数": 114, "差评数": 12, "差评率": 0.0043, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼合肥明珠富茂店", "评价数": 102, "差评数": 14, "差评率": 0.004, "回复率": 0.9902, "负责人": "陈宝林"}, {"店": "同庆楼合肥天鹅万达店", "评价数": 103, "差评数": 11, "差评率": 0.004, "回复率": 0.6214, "负责人": "董康"}, {"店": "同庆楼无锡华夏路店", "评价数": 179, "差评数": 17, "差评率": 0.0039, "回复率": 0.9888, "负责人": "陈宝林"}, {"店": "同庆楼安庆大南门店", "评价数": 78, "差评数": 6, "差评率": 0.0039, "回复率": 0.3718, "负责人": "董康"}, {"店": "同庆楼北京大钟寺店", "评价数": 118, "差评数": 13, "差评率": 0.0038, "回复率": 0.9746, "负责人": "董康"}, {"店": "同庆楼合肥马鞍山路店", "评价数": 132, "差评数": 13, "差评率": 0.0038, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼合肥铜陵路店", "评价数": 118, "差评数": 11, "差评率": 0.0038, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼滁州富茂店", "评价数": 65, "差评数": 6, "差评率": 0.0038, "回复率": 0.3846, "负责人": "董康"}, {"店": "同庆楼合肥百大心悦城店", "评价数": 243, "差评数": 17, "差评率": 0.0038, "回复率": 0.5967, "负责人": "董康"}, {"店": "同庆楼合肥皖通店", "评价数": 99, "差评数": 13, "差评率": 0.0036, "回复率": 0.5758, "负责人": "董康"}, {"店": "同庆楼合肥花园店", "评价数": 105, "差评数": 11, "差评率": 0.0036, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼北京金宝街店", "评价数": 83, "差评数": 11, "差评率": 0.0035, "回复率": 1.0, "负责人": "董康"}, {"店": "同庆楼无锡哥伦布店", "评价数": 98, "差评数": 9, "差评率": 0.0035, "回复率": 0.5306, "负责人": "伍宇星"}, {"店": "帕丽斯无锡锡沪路店", "评价数": 62, "差评数": 4, "差评率": 0.0035, "回复率": 0.9839, "负责人": "伍宇星"}, {"店": "同庆楼合肥金屯店", "评价数": 198, "差评数": 20, "差评率": 0.0034, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜冠富茂店", "评价数": 243, "差评数": 14, "差评率": 0.0033, "回复率": 0.5514, "负责人": "陈宝林"}, {"店": "同庆楼芜湖赭山西路店", "评价数": 137, "差评数": 12, "差评率": 0.0032, "回复率": 0.9927, "负责人": "董康"}, {"店": "同庆楼合肥肥西富茂店", "评价数": 29, "差评数": 4, "差评率": 0.0031, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼无锡滨湖万达店", "评价数": 118, "差评数": 12, "差评率": 0.0031, "回复率": 0.9153, "负责人": "伍宇星"}, {"店": "同庆楼无锡茂业店", "评价数": 253, "差评数": 18, "差评率": 0.0031, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼无锡惠山万达店", "评价数": 193, "差评数": 15, "差评率": 0.003, "回复率": 0.9793, "负责人": "伍宇星"}, {"店": "同庆楼南京新华大厦店", "评价数": 169, "差评数": 13, "差评率": 0.003, "回复率": 0.9941, "负责人": "伍宇星"}, {"店": "同庆楼芜湖奥体店", "评价数": 162, "差评数": 12, "差评率": 0.003, "回复率": 0.9877, "负责人": "董康"}, {"店": "同庆楼南京珠江路店", "评价数": 103, "差评数": 13, "差评率": 0.0029, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥长丰路店", "评价数": 91, "差评数": 7, "差评率": 0.0029, "回复率": 1.0, "负责人": "陈宝林"}, {"店": "同庆楼常州吾悦店", "评价数": 115, "差评数": 15, "差评率": 0.0028, "回复率": 0.9652, "负责人": "伍宇星"}, {"店": "同庆楼溧阳天目路店", "评价数": 179, "差评数": 12, "差评率": 0.0028, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥瑶海富茂店", "评价数": 96, "差评数": 10, "差评率": 0.0027, "回复率": 0.9167, "负责人": "陈宝林"}, {"店": "同庆楼无锡宝能店", "评价数": 68, "差评数": 7, "差评率": 0.0027, "回复率": 0.7353, "负责人": "伍宇星"}, {"店": "同庆楼阜阳富茂店", "评价数": 18, "差评数": 2, "差评率": 0.0024, "回复率": 0.8333, "负责人": "陈宝林"}, {"店": "同庆楼无锡安镇店", "评价数": 150, "差评数": 13, "差评率": 0.0024, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥北城富茂店", "评价数": 44, "差评数": 4, "差评率": 0.0023, "回复率": 0.9091, "负责人": "陈宝林"}, {"店": "同庆楼南京鼓楼店", "评价数": 192, "差评数": 15, "差评率": 0.0023, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼阜阳双清湾店", "评价数": 41, "差评数": 3, "差评率": 0.0022, "回复率": 0.5854, "负责人": "陈宝林"}, {"店": "同庆楼南京建邺万达店", "评价数": 168, "差评数": 9, "差评率": 0.0015, "回复率": 1.0, "负责人": "伍宇星"}, {"店": "同庆楼滁州悦达店", "评价数": 56, "差评数": 2, "差评率": 0.0012, "回复率": 0.6071, "负责人": "董康"}, {"店": "同庆楼上海富茂店", "评价数": 23, "差评数": 1, "差评率": 0.0011, "回复率": 0.6957, "负责人": "陈宝林"}, {"店": "帕丽斯合肥奥莱店", "评价数": 2, "差评数": 0, "差评率": 0.0, "回复率": 1.0, "负责人": "陈宝林"}], "quality": [{"店": "同庆楼无锡江溪路店", "商品质量分": 4.0, "负责人": "伍宇星"}, {"店": "同庆楼南京国泰店", "商品质量分": 4.1, "负责人": "伍宇星"}, {"店": "同庆楼常州孟河店", "商品质量分": 4.19, "负责人": "伍宇星"}, {"店": "同庆楼合肥包河万达店", "商品质量分": 4.2, "负责人": "董康"}, {"店": "同庆楼合肥皖通店", "商品质量分": 4.21, "负责人": "董康"}, {"店": "同庆楼芜湖赭山西路店", "商品质量分": 4.21, "负责人": "董康"}, {"店": "同庆楼无锡哥伦布店", "商品质量分": 4.26, "负责人": "伍宇星"}, {"店": "同庆楼句容1912店", "商品质量分": 4.27, "负责人": "伍宇星"}, {"店": "同庆楼合肥凤阳路店", "商品质量分": 4.3, "负责人": "董康"}, {"店": "同庆楼无锡宝能店", "商品质量分": 4.3, "负责人": "伍宇星"}, {"店": "同庆楼芜湖奥体店", "商品质量分": 4.3, "负责人": "董康"}, {"店": "同庆楼合肥金屯店", "商品质量分": 4.31, "负责人": "陈宝林"}, {"店": "同庆楼北京大钟寺店", "商品质量分": 4.33, "负责人": "董康"}, {"店": "同庆楼南京红山路店", "商品质量分": 4.33, "负责人": "伍宇星"}, {"店": "同庆楼合肥长丰路店", "商品质量分": 4.33, "负责人": "陈宝林"}, {"店": "同庆楼无锡安镇店", "商品质量分": 4.33, "负责人": "伍宇星"}, {"店": "同庆楼合肥花园店", "商品质量分": 4.34, "负责人": "董康"}, {"店": "同庆楼合肥滨湖富茂店", "商品质量分": 4.36, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜冠富茂店", "商品质量分": 4.36, "负责人": "陈宝林"}, {"店": "同庆楼常州吾悦店", "商品质量分": 4.36, "负责人": "伍宇星"}, {"店": "同庆楼合肥庐州府店", "商品质量分": 4.39, "负责人": "董康"}, {"店": "同庆楼合肥港汇店", "商品质量分": 4.39, "负责人": "董康"}, {"店": "同庆楼安庆富茂店", "商品质量分": 4.39, "负责人": "董康"}, {"店": "同庆楼淮北濉溪店", "商品质量分": 4.39, "负责人": "陈宝林"}, {"店": "同庆楼合肥之心城店", "商品质量分": 4.4, "负责人": "陈宝林"}, {"店": "同庆楼安庆人民东路店", "商品质量分": 4.4, "负责人": "董康"}, {"店": "同庆楼无锡惠山万达店", "商品质量分": 4.4, "负责人": "伍宇星"}, {"店": "同庆楼滁州富茂店", "商品质量分": 4.4, "负责人": "董康"}, {"店": "同庆楼合肥安高店", "商品质量分": 4.41, "负责人": "董康"}, {"店": "同庆楼合肥瑶海富茂店", "商品质量分": 4.41, "负责人": "陈宝林"}, {"店": "同庆楼阜阳双清湾店", "商品质量分": 4.41, "负责人": "陈宝林"}, {"店": "同庆楼合肥马鞍山路店", "商品质量分": 4.43, "负责人": "董康"}, {"店": "同庆楼阜阳富茂店", "商品质量分": 4.43, "负责人": "陈宝林"}, {"店": "同庆楼南京珠江路店", "商品质量分": 4.46, "负责人": "伍宇星"}, {"店": "同庆楼合肥徽州府店", "商品质量分": 4.46, "负责人": "董康"}, {"店": "同庆楼北京金宝街店", "商品质量分": 4.47, "负责人": "董康"}, {"店": "同庆楼南京新华大厦店", "商品质量分": 4.47, "负责人": "伍宇星"}, {"店": "同庆楼合肥百大心悦城店", "商品质量分": 4.47, "负责人": "董康"}, {"店": "同庆楼合肥肥西富茂店", "商品质量分": 4.47, "负责人": "陈宝林"}, {"店": "同庆楼南京尧佳路店", "商品质量分": 4.49, "负责人": "伍宇星"}, {"店": "同庆楼芜湖银湖店", "商品质量分": 4.49, "负责人": "董康"}, {"店": "同庆楼南京鼓楼店", "商品质量分": 4.5, "负责人": "伍宇星"}, {"店": "同庆楼合肥明珠富茂店", "商品质量分": 4.5, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜陵路店", "商品质量分": 4.5, "负责人": "陈宝林"}, {"店": "同庆楼安庆大南门店", "商品质量分": 4.5, "负责人": "董康"}, {"店": "同庆楼常州奥体店", "商品质量分": 4.5, "负责人": "伍宇星"}, {"店": "同庆楼无锡滨湖万达店", "商品质量分": 4.5, "负责人": "伍宇星"}, {"店": "同庆楼滁州悦达店", "商品质量分": 4.5, "负责人": "董康"}, {"店": "帕丽斯合肥奥莱店", "商品质量分": 4.5, "负责人": "陈宝林"}, {"店": "同庆楼无锡华夏路店", "商品质量分": 4.51, "负责人": "陈宝林"}, {"店": "同庆楼芜湖华强店", "商品质量分": 4.56, "负责人": "董康"}, {"店": "同庆楼无锡茂业店", "商品质量分": 4.57, "负责人": "伍宇星"}, {"店": "同庆楼上海富茂店", "商品质量分": 4.6, "负责人": "陈宝林"}, {"店": "同庆楼合肥高新富茂店", "商品质量分": 4.6, "负责人": "陈宝林"}, {"店": "帕丽斯常州常青里店", "商品质量分": 4.6, "负责人": "伍宇星"}, {"店": "同庆楼合肥北城富茂店", "商品质量分": 4.63, "负责人": "陈宝林"}, {"店": "同庆楼合肥天鹅万达店", "商品质量分": 4.66, "负责人": "董康"}, {"店": "同庆楼南京建邺万达店", "商品质量分": 4.69, "负责人": "伍宇星"}, {"店": "同庆楼溧阳天目路店", "商品质量分": 4.7, "负责人": "伍宇星"}, {"店": "帕丽斯无锡锡沪路店", "商品质量分": 4.8, "负责人": "伍宇星"}, {"店": "同庆楼肥东吾悦店", "商品质量分": 4.9, "负责人": "陈宝林"}], "foodsafe": [{"店": "同庆楼合肥皖通店", "食品安全负反馈率": 28.1, "负责人": "董康"}, {"店": "同庆楼常州孟河店", "食品安全负反馈率": 27.53, "负责人": "伍宇星"}, {"店": "同庆楼南京国泰店", "食品安全负反馈率": 26.91, "负责人": "伍宇星"}, {"店": "同庆楼无锡安镇店", "食品安全负反馈率": 24.69, "负责人": "伍宇星"}, {"店": "同庆楼无锡江溪路店", "食品安全负反馈率": 22.83, "负责人": "伍宇星"}, {"店": "同庆楼合肥包河万达店", "食品安全负反馈率": 21.98, "负责人": "董康"}, {"店": "同庆楼合肥凤阳路店", "食品安全负反馈率": 20.76, "负责人": "董康"}, {"店": "同庆楼合肥瑶海富茂店", "食品安全负反馈率": 19.84, "负责人": "陈宝林"}, {"店": "同庆楼合肥金屯店", "食品安全负反馈率": 19.37, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜冠富茂店", "食品安全负反馈率": 18.78, "负责人": "陈宝林"}, {"店": "同庆楼芜湖赭山西路店", "食品安全负反馈率": 16.55, "负责人": "董康"}, {"店": "同庆楼阜阳富茂店", "食品安全负反馈率": 16.14, "负责人": "陈宝林"}, {"店": "同庆楼合肥长丰路店", "食品安全负反馈率": 14.66, "负责人": "陈宝林"}, {"店": "同庆楼合肥港汇店", "食品安全负反馈率": 14.61, "负责人": "董康"}, {"店": "同庆楼芜湖奥体店", "食品安全负反馈率": 14.39, "负责人": "董康"}, {"店": "同庆楼无锡惠山万达店", "食品安全负反馈率": 14.17, "负责人": "伍宇星"}, {"店": "同庆楼南京红山路店", "食品安全负反馈率": 13.03, "负责人": "伍宇星"}, {"店": "同庆楼北京大钟寺店", "食品安全负反馈率": 12.56, "负责人": "董康"}, {"店": "同庆楼安庆富茂店", "食品安全负反馈率": 12.09, "负责人": "董康"}, {"店": "同庆楼滁州富茂店", "食品安全负反馈率": 11.91, "负责人": "董康"}, {"店": "同庆楼无锡宝能店", "食品安全负反馈率": 11.54, "负责人": "伍宇星"}, {"店": "同庆楼南京鼓楼店", "食品安全负反馈率": 11.48, "负责人": "伍宇星"}, {"店": "同庆楼南京尧佳路店", "食品安全负反馈率": 11.17, "负责人": "伍宇星"}, {"店": "同庆楼合肥花园店", "食品安全负反馈率": 10.96, "负责人": "董康"}, {"店": "同庆楼无锡哥伦布店", "食品安全负反馈率": 10.74, "负责人": "伍宇星"}, {"店": "同庆楼芜湖银湖店", "食品安全负反馈率": 10.32, "负责人": "董康"}, {"店": "同庆楼合肥之心城店", "食品安全负反馈率": 10.18, "负责人": "陈宝林"}, {"店": "同庆楼合肥明珠富茂店", "食品安全负反馈率": 9.64, "负责人": "陈宝林"}, {"店": "同庆楼合肥百大心悦城店", "食品安全负反馈率": 9.54, "负责人": "董康"}, {"店": "同庆楼合肥徽州府店", "食品安全负反馈率": 8.79, "负责人": "董康"}, {"店": "同庆楼合肥庐州府店", "食品安全负反馈率": 8.37, "负责人": "董康"}, {"店": "同庆楼合肥滨湖富茂店", "食品安全负反馈率": 7.63, "负责人": "陈宝林"}, {"店": "同庆楼合肥铜陵路店", "食品安全负反馈率": 7.52, "负责人": "陈宝林"}, {"店": "同庆楼合肥马鞍山路店", "食品安全负反馈率": 7.49, "负责人": "董康"}, {"店": "同庆楼合肥安高店", "食品安全负反馈率": 6.98, "负责人": "董康"}, {"店": "同庆楼南京新华大厦店", "食品安全负反馈率": 6.64, "负责人": "伍宇星"}, {"店": "同庆楼合肥高新富茂店", "食品安全负反馈率": 6.61, "负责人": "陈宝林"}, {"店": "同庆楼常州吾悦店", "食品安全负反馈率": 6.19, "负责人": "伍宇星"}, {"店": "同庆楼安庆人民东路店", "食品安全负反馈率": 4.59, "负责人": "董康"}, {"店": "同庆楼南京珠江路店", "食品安全负反馈率": 4.44, "负责人": "伍宇星"}, {"店": "同庆楼无锡滨湖万达店", "食品安全负反馈率": 4.44, "负责人": "伍宇星"}, {"店": "同庆楼常州奥体店", "食品安全负反馈率": 4.17, "负责人": "伍宇星"}, {"店": "同庆楼无锡茂业店", "食品安全负反馈率": 3.93, "负责人": "伍宇星"}, {"店": "同庆楼无锡华夏路店", "食品安全负反馈率": 3.82, "负责人": "陈宝林"}, {"店": "同庆楼南京建邺万达店", "食品安全负反馈率": 3.05, "负责人": "伍宇星"}, {"店": "同庆楼合肥天鹅万达店", "食品安全负反馈率": 3.05, "负责人": "董康"}, {"店": "同庆楼北京金宝街店", "食品安全负反馈率": 2.77, "负责人": "董康"}, {"店": "同庆楼芜湖华强店", "食品安全负反馈率": 2.74, "负责人": "董康"}, {"店": "同庆楼合肥肥西富茂店", "食品安全负反馈率": 1.73, "负责人": "陈宝林"}, {"店": "同庆楼上海富茂店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "同庆楼句容1912店", "食品安全负反馈率": 0.0, "负责人": "伍宇星"}, {"店": "同庆楼合肥北城富茂店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "同庆楼安庆大南门店", "食品安全负反馈率": 0.0, "负责人": "董康"}, {"店": "同庆楼淮北濉溪店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "同庆楼溧阳天目路店", "食品安全负反馈率": 0.0, "负责人": "伍宇星"}, {"店": "同庆楼滁州悦达店", "食品安全负反馈率": 0.0, "负责人": "董康"}, {"店": "同庆楼肥东吾悦店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "同庆楼阜阳双清湾店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "帕丽斯合肥奥莱店", "食品安全负反馈率": 0.0, "负责人": "陈宝林"}, {"店": "帕丽斯常州常青里店", "食品安全负反馈率": 0.0, "负责人": "伍宇星"}, {"店": "帕丽斯无锡锡沪路店", "食品安全负反馈率": 0.0, "负责人": "伍宇星"}], "reviewMeta": {"差评总数": 750, "有效订单总数": 191111, "口径": "差评率=差评数÷有效订单数；美团差评=商品评分<3；淘闪差评=总体评分<3"}};
+var charts = {};
 
 function shortName(s){ return s.replace("同庆楼",""); }
 function pct(x, d){ return (x*100).toFixed(d===undefined?2:d)+"%"; }
+function initChart(id){
+  if(charts[id]){ charts[id].dispose(); }
+  charts[id] = echarts.init(document.getElementById(id));
+  return charts[id];
+}
 
 function applyFilter(){
   var owner = document.getElementById("ownerFilter").value;
   var f = function(r){ return !owner || r.负责人 === owner; };
 
-  // KPI
+  /* ===== KPI ===== */
   var stores = DATA.stores.filter(f);
   var income = stores.reduce(function(a,s){return a+s.收入;},0);
   var orders = stores.reduce(function(a,s){return a+s.订单;},0);
   var rs0 = DATA.reviews.filter(f);
   var bad0 = rs0.reduce(function(a,r){return a+r.差评数;},0);
-  var kpis = [
-    ["昨日实收（三平台）","¥"+Math.round(income).toLocaleString()],
-    ["昨日有效订单",orders.toLocaleString()],
-    ["近30天差评率",(function(){
-      var ratio = rs0.reduce(function(a,r){return a+r.评价数;},0) / DATA.reviews.reduce(function(a,r){return a+r.评价数;},0);
-      var totalOrders = Math.round(DATA.reviewMeta.有效订单总数 * ratio);
-      return totalOrders ? pct(bad0/totalOrders) : "-";
-    })()],
-    ["商品质量分（近7日）",(function(){
-      var q = DATA.quality.filter(f);
-      return q.length ? (q.reduce(function(a,r){return a+r.商品质量分;},0)/q.length).toFixed(2) : "-";
-    })()],
-    ["食品安全负反馈率（近7日）",(function(){
-      var q = DATA.foodsafe.filter(f);
-      return q.length ? (q.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/q.length).toFixed(1)+"%" : "-";
-    })()]
+  var diffRate = (function(){
+    var ratio = rs0.reduce(function(a,r){return a+r.评价数;},0) / DATA.reviews.reduce(function(a,r){return a+r.评价数;},0);
+    var totalOrders = Math.round(DATA.reviewMeta.有效订单总数 * ratio);
+    return totalOrders ? bad0/totalOrders : 0;
+  })();
+  var qAvg = (function(){ var q=DATA.quality.filter(f); return q.length? q.reduce(function(a,r){return a+r.商品质量分;},0)/q.length : 0; })();
+  var fAvg = (function(){ var q=DATA.foodsafe.filter(f); return q.length? q.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/q.length : 0; })();
+
+  var kpiData = [
+    ["💰","昨日实收","¥"+Math.round(income).toLocaleString()],
+    ["📦","昨日有效订单",orders.toLocaleString()],
+    ["⭐","近30天差评率",pct(diffRate)],
+    ["🍽️","商品质量分（近7日）",qAvg.toFixed(2)],
+    ["🛡️","食安负反馈率（近7日）",fAvg.toFixed(1)+"%"]
   ];
-  document.getElementById("kpis").innerHTML = kpis.map(function(k){
-    return '<div class="kpi"><div class="label">'+k[0]+'</div><div class="val">'+k[1]+'</div></div>';
+  document.getElementById("kpis").innerHTML = kpiData.map(function(k){
+    return '<div class="kpi"><div class="icon">'+k[0]+'</div><div class="label">'+k[1]+'</div><div class="val">'+k[2]+'</div></div>';
   }).join("");
 
-  // 评价表（全部，按差评率降序）
-  var rs = rs0.sort(function(a,b){return a.差评率-b.差评率;});
+  /* ===== 目标追踪 ===== */
+  var targets = [
+    {name:"董康", goal:2973819, actual:623937, rate:0.813},
+    {name:"伍宇星", goal:3699180, actual:735924, rate:0.771},
+    {name:"陈宝林", goal:2143107, actual:321350, rate:0.581}
+  ];
+  document.getElementById("targetBars").innerHTML = targets.map(function(t){
+    var color = t.rate >= 0.9 ? "#38a169" : t.rate >= 0.7 ? "#ed8936" : "#e53e3e";
+    var badge = t.rate >= 0.9 ? '<span class="badge badge-ok">正常</span>' : t.rate >= 0.7 ? '<span class="badge badge-warn">预警</span>' : '<span class="badge badge-danger">危险</span>';
+    return '<div class="target-row"><div class="target-name">'+t.name+'</div><div class="target-info">'
+      + '<div class="target-num">目标 ¥'+t.goal.toLocaleString()+' ｜ 1-8日 ¥'+t.actual.toLocaleString()+' ｜ 预估 '+pct(t.rate,1)+' '+badge+'</div>'
+      + '<div class="target-bar"><div style="width:'+Math.min(t.rate*100,100)+'%;background:'+color+'"></div></div>'
+      + '</div></div>';
+  }).join("");
+
+  /* ===== 评价分析 ===== */
+  var rs = rs0.slice().sort(function(a,b){return a.差评率-b.差评率;});
+  document.getElementById("reviewMeta").textContent = "共"+rs.length+"家 ｜ 差评 "+bad0+" ｜ 口径："+DATA.reviewMeta.口径;
+  // 图表：差评率最高的10家
+  var chartRs = rs.slice().sort(function(a,b){return b.差评率-a.差评率;}).slice(0,10);
+  var c1 = initChart("chartReview");
+  c1.setOption({
+    title:{text:"差评率最高的10家门店",left:"center",textStyle:{fontSize:13}},
+    tooltip:{trigger:"axis",formatter:function(p){return p[0].name+"<br/>差评率: "+p[0].value+"%";}},
+    xAxis:{type:"value",axisLabel:{formatter:"{value}%"}},
+    yAxis:{type:"category",data:chartRs.map(function(r){return shortName(r.店);}).reverse(),axisLabel:{fontSize:11}},
+    series:[{type:"bar",data:chartRs.map(function(r){return +(r.差评率*100).toFixed(2);}).reverse(),
+      itemStyle:{color:function(p){return p.value>=1?"#e53e3e":p.value>=0.5?"#ed8936":"#38a169";}},
+      label:{show:true,position:"right",formatter:"{c}%",fontSize:10}}],
+    grid:{left:110,right:50,top:40,bottom:30}
+  });
+  // 表格
   document.getElementById("reviewTable").innerHTML = rs.map(function(r){
-    var cls = r.差评率 >= 0.01 ? "bad" : "";
-    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+r.评价数+"</td><td class='"+cls+"'>"+pct(r.差评率)+"</td><td>"+Math.round(r.回复率*100)+"%</td></tr>";
+    var badge = r.差评率>=0.01?'<span class="badge badge-danger">高</span>':r.差评率>=0.005?'<span class="badge badge-warn">中</span>':'<span class="badge badge-ok">低</span>';
+    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+r.评价数+"</td><td>"+pct(r.差评率)+" "+badge+"</td><td>"+Math.round(r.回复率*100)+"%</td></tr>";
   }).join("");
-  document.getElementById("reviewSummary").textContent = "共"+rs.length+"家 ｜ 差评 "+bad0;
-  document.getElementById("reviewMeta").textContent = "口径："+DATA.reviewMeta.口径;
 
-  // 质量分表（全部，按分数升序）
-  var qs = DATA.quality.filter(f).sort(function(a,b){return b.商品质量分-a.商品质量分;});
+  /* ===== 商品质量分 ===== */
+  var qs = DATA.quality.filter(f).slice().sort(function(a,b){return b.商品质量分-a.商品质量分;});
+  document.getElementById("qualitySummary").textContent = "共"+qs.length+"家 ｜ 均值 "+(qs.reduce(function(a,r){return a+r.商品质量分;},0)/qs.length).toFixed(2);
+  var c2 = initChart("chartQuality");
+  var qLow = qs.slice().sort(function(a,b){return a.商品质量分-b.商品质量分;}).slice(0,10);
+  c2.setOption({
+    title:{text:"质量分最低的10家门店",left:"center",textStyle:{fontSize:13}},
+    tooltip:{trigger:"axis"},
+    xAxis:{type:"value",min:3.8,max:5},
+    yAxis:{type:"category",data:qLow.map(function(r){return shortName(r.店);}).reverse(),axisLabel:{fontSize:11}},
+    series:[{type:"bar",data:qLow.map(function(r){return r.商品质量分;}).reverse(),
+      itemStyle:{color:function(p){return p.value<4.3?"#e53e3e":p.value<4.5?"#ed8936":"#38a169";}},
+      label:{show:true,position:"right",fontSize:10}}],
+    grid:{left:110,right:50,top:40,bottom:30}
+  });
   document.getElementById("qualityTable").innerHTML = qs.map(function(r){
-    var cls = r.商品质量分 < 4.3 ? "bad" : "";
-    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td class='"+cls+"'>"+r.商品质量分.toFixed(2)+"</td></tr>";
+    var badge = r.商品质量分<4.3?'<span class="badge badge-danger">待改进</span>':r.商品质量分<4.5?'<span class="badge badge-warn">一般</span>':'<span class="badge badge-ok">优秀</span>';
+    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.商品质量分.toFixed(2)+"</b></td><td>"+badge+"</td></tr>";
   }).join("");
-  document.getElementById("qualitySummary").textContent = qs.length+"家店均值 "+(qs.reduce(function(a,r){return a+r.商品质量分;},0)/qs.length).toFixed(2);
 
-  // 食安表（全部，按负反馈率降序）
-  var fs = DATA.foodsafe.filter(f).sort(function(a,b){return a.食品安全负反馈率-b.食品安全负反馈率;});
+  /* ===== 食安负反馈率 ===== */
+  var fs = DATA.foodsafe.filter(f).slice().sort(function(a,b){return a.食品安全负反馈率-b.食品安全负反馈率;});
+  document.getElementById("foodSummary").textContent = "共"+fs.length+"家 ｜ 均值 "+(fs.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/fs.length).toFixed(1)+"%";
+  var c3 = initChart("chartFood");
+  var fHigh = fs.slice().sort(function(a,b){return b.食品安全负反馈率-a.食品安全负反馈率;}).slice(0,10);
+  c3.setOption({
+    title:{text:"负反馈率最高的10家门店",left:"center",textStyle:{fontSize:13}},
+    tooltip:{trigger:"axis",formatter:function(p){return p[0].name+"<br/>负反馈率: "+p[0].value+"%";}},
+    xAxis:{type:"value",axisLabel:{formatter:"{value}%"}},
+    yAxis:{type:"category",data:fHigh.map(function(r){return shortName(r.店);}).reverse(),axisLabel:{fontSize:11}},
+    series:[{type:"bar",data:fHigh.map(function(r){return +r.食品安全负反馈率.toFixed(1);}).reverse(),
+      itemStyle:{color:function(p){return p.value>15?"#e53e3e":p.value>10?"#ed8936":"#38a169";}},
+      label:{show:true,position:"right",formatter:"{c}%",fontSize:10}}],
+    grid:{left:110,right:50,top:40,bottom:30}
+  });
   document.getElementById("foodTable").innerHTML = fs.map(function(r){
-    var cls = r.食品安全负反馈率 > 15 ? "bad" : "";
-    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td class='"+cls+"'>"+r.食品安全负反馈率.toFixed(1)+"%</td></tr>";
+    var badge = r.食品安全负反馈率>15?'<span class="badge badge-danger">高</span>':r.食品安全负反馈率>10?'<span class="badge badge-warn">中</span>':'<span class="badge badge-ok">低</span>';
+    return "<tr><td>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td><b>"+r.食品安全负反馈率.toFixed(1)+"%</b></td><td>"+badge+"</td></tr>";
   }).join("");
-  document.getElementById("foodSummary").textContent = fs.length+"家店均值 "+(fs.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/fs.length).toFixed(1)+"%";
 
-  // 门店排行（全部，按实收降序）
-  var ss = stores.sort(function(a,b){return b.收入-a.收入;});
-  document.getElementById("storeTable").innerHTML = ss.map(function(s){
-    return "<tr><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td>¥"+Math.round(s.收入).toLocaleString()+"</td><td>"+s.订单+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td></tr>";
+  /* ===== 门店排行 ===== */
+  var ss = stores.slice().sort(function(a,b){return b.收入-a.收入;});
+  var c4 = initChart("chartStore");
+  var top15 = ss.slice(0,15);
+  c4.setOption({
+    title:{text:"昨日实收 Top15",left:"center",textStyle:{fontSize:13}},
+    tooltip:{trigger:"axis",formatter:function(p){return p[0].name+"<br/>实收: ¥"+Number(p[0].value).toLocaleString();}},
+    xAxis:{type:"value",axisLabel:{formatter:function(v){return "¥"+(v/1000)+"k";}}},
+    yAxis:{type:"category",data:top15.map(function(s){return shortName(s.店);}).reverse(),axisLabel:{fontSize:11}},
+    series:[{type:"bar",data:top15.map(function(s){return Math.round(s.收入);}).reverse(),
+      itemStyle:{color:{type:"linear",x:0,y:0,x2:1,y2:0,colorStops:[{offset:0,color:"#63b3ed"},{offset:1,color:"#2b6cb0"}]}},
+      label:{show:true,position:"right",formatter:function(p){return "¥"+Number(p.value).toLocaleString();},fontSize:10}}],
+    grid:{left:110,right:90,top:40,bottom:30}
+  });
+  document.getElementById("storeTable").innerHTML = ss.map(function(s,i){
+    var medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1);
+    return "<tr><td>"+medal+"</td><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td><b>¥"+Math.round(s.收入).toLocaleString()+"</b></td><td>"+s.订单+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td></tr>";
   }).join("");
 }
+
+window.addEventListener("resize", function(){
+  for(var k in charts){ charts[k].resize(); }
+});
 
 applyFilter();
 </script>

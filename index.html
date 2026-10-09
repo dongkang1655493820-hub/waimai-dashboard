@@ -36,7 +36,7 @@ th:first-child,td:first-child{text-align:left}
 th{background:#fafafa;color:#666;font-weight:600}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
 .dot-r{background:#f5222d}.dot-y{background:#faad14}.dot-g{background:#52c41a}
-.detail{display:none;margin-top:8px}
+.detail{display:block;margin-top:8px}
 .toggle{color:#1890ff;cursor:pointer;font-size:13px;margin-top:10px;display:inline-block}
 .toggle:hover{text-decoration:underline}
 .rank{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#f0f0f0;font-size:12px;font-weight:700}
@@ -70,7 +70,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <h2>⭐ 差评率 <span style="font-size:12px;color:#999;font-weight:400">近30天</span></h2>
 <div class="insight" id="reviewInsight"></div>
 <div class="chart" id="chartReview"></div>
-<span class="toggle" onclick="toggle('reviewDetail',this)">▼ 查看全部明细</span>
+<span class="toggle" onclick="toggle('reviewDetail',this)">▲ 收起明细</span>
 <div class="detail" id="reviewDetail"><table>
 <tr><th>门店</th><th>差评率</th><th>评价数</th><th>回复率</th></tr>
 <tbody id="reviewTable"></tbody></table></div>
@@ -80,7 +80,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <h2>🍽️ 菜品质量 <span style="font-size:12px;color:#999;font-weight:400">近7天 · 美团</span></h2>
 <div class="insight" id="qualityInsight"></div>
 <div class="chart" id="chartQuality" style="height:300px"></div>
-<span class="toggle" onclick="toggle('qualityDetail',this)">▼ 查看全部明细</span>
+<span class="toggle" onclick="toggle('qualityDetail',this)">▲ 收起明细</span>
 <div class="detail" id="qualityDetail"><table>
 <tr><th>门店</th><th>质量分</th><th>评价</th></tr>
 <tbody id="qualityTable"></tbody></table></div>
@@ -90,7 +90,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <h2>🛡️ 食品安全 <span style="font-size:12px;color:#999;font-weight:400">近7天 · 美团</span></h2>
 <div class="insight" id="foodInsight"></div>
 <div class="chart" id="chartFood" style="height:300px"></div>
-<span class="toggle" onclick="toggle('foodDetail',this)">▼ 查看全部明细</span>
+<span class="toggle" onclick="toggle('foodDetail',this)">▲ 收起明细</span>
 <div class="detail" id="foodDetail"><table>
 <tr><th>门店</th><th>负反馈率</th><th>评价</th></tr>
 <tbody id="foodTable"></tbody></table></div>
@@ -99,7 +99,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="card">
 <h2>🏪 昨日收入排行</h2>
 <div class="chart" id="chartStore" style="height:400px"></div>
-<span class="toggle" onclick="toggle('storeDetail',this)">▼ 查看全部明细</span>
+<span class="toggle" onclick="toggle('storeDetail',this)">▲ 收起明细</span>
 <div class="detail" id="storeDetail"><table>
 <tr><th></th><th>门店</th><th>实收</th><th>订单</th><th>到手率</th></tr>
 <tbody id="storeTable"></tbody></table></div>
@@ -115,7 +115,7 @@ function toggle(id, el){
   var e = document.getElementById(id);
   var show = e.style.display !== "block";
   e.style.display = show ? "block" : "none";
-  el.textContent = (show ? "▲ 收起明细" : "▼ 查看全部明细");
+  el.textContent = (show ? "▲ 收起明细" : "▲ 收起明细");
   for(var k in charts){ charts[k].resize(); }
 }
 function initChart(id){

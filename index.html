@@ -78,13 +78,13 @@ th{background:#fafafa;color:#666;font-weight:600}
 
 <div class="card">
 <h2>🎯 10月目标完成情况 <span style="font-size:12px;color:#999;font-weight:400">三平台实收合计</span></h2>
-<div class="sub">预估完成率 = 1-8日日均 × 31天 ÷ 月目标</div>
+<div class="sub">📐 公式：预估完成率 = (1-8日实收 ÷ 8天 × 31天) ÷ 月目标 ｜ 只考核负责人大盘</div>
 <div id="targetBars"></div>
 </div>
 
 <div class="card">
 <h2>⭐ 差评率 <span style="font-size:12px;color:#999;font-weight:400">美团外卖+淘宝闪购 · 09-08~10-08</span></h2>
-<div class="sub">差评率 = 差评数 ÷ 有效订单数 ｜ 美团差评=商品评分&lt;3 ｜ 淘闪差评=总体评分&lt;3</div>
+<div class="sub">📐 公式：差评率 = 一二星差评数 ÷ 有效订单数（美团+淘闪）<br>美团一二星 = 商品评分&lt;3 ｜ 淘闪一二星 = 总体评分&lt;3 ｜ 评级：A类&lt;0.5%，B类0.5%~1%，C类≥1%</div>
 <div class="chart" id="chartReview"></div>
 <div class="detail"><table>
 <tr><th>门店</th><th>负责人</th><th>有效订单数</th><th>一二星差评数</th><th>差评率</th><th>回复率</th><th>差评率评级</th></tr>
@@ -94,7 +94,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 
 <div class="card">
 <h2>🍽️ 菜品质量 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 10-02~10-08</span></h2>
-<div class="sub" id="qualitySummary"></div>
+<div class="sub">📐 公式：近7天美团"商品质量分"的平均值（满分5分）｜ 评级：A类≥4.5，B类4.3~4.5，C类&lt;4.3</div><div class="sub" id="qualitySummary"></div>
 <div class="chart" id="chartQuality" style="height:300px"></div>
 <div class="detail"><table>
 <tr><th>门店</th><th>负责人</th><th>菜品质量分</th><th>菜品质量评级</th></tr>
@@ -104,7 +104,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 
 <div class="card">
 <h2>🛡️ 食品安全 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 10-02~10-08</span></h2>
-<div class="sub" id="foodSummary"></div>
+<div class="sub">📐 公式：近7天美团"食品安全负反馈率"的平均值 ｜ 评级：A类≤10%，B类10%~15%，C类&gt;15%</div><div class="sub" id="foodSummary"></div>
 <div class="chart" id="chartFood" style="height:300px"></div>
 <div class="detail"><table>
 <tr><th>门店</th><th>负责人</th><th>负反馈率</th><th>食安评级</th></tr>
@@ -114,6 +114,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 
 <div class="card">
 <h2>🏪 昨日收入排行 <span style="font-size:12px;color:#999;font-weight:400">美团+淘闪+京东</span></h2>
+<div class="sub">📐 公式：实收 = 美团营业收入 + 淘闪收入 + 京东收入 ｜ 到手率 = 实收 ÷ 营业额 ｜ 评级按到手率：A类≥60%，B类55%~60%，C类&lt;55%</div>
 <div class="chart" id="chartStore" style="height:400px"></div>
 <div class="detail"><table>
 <tr><th></th><th>门店</th><th>负责人</th><th>实收</th><th>订单</th><th>到手率</th><th>到手率评级</th></tr>

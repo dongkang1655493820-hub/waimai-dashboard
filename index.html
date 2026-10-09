@@ -61,13 +61,13 @@ th{background:#fafafa;color:#666;font-weight:600}
 <div class="kpis" id="kpis"></div>
 
 <div class="card">
-<h2>🎯 10月目标完成情况</h2>
+<h2>🎯 10月目标完成情况 <span style="font-size:12px;color:#999;font-weight:400">三平台实收合计</span></h2>
 <div id="targetBars"></div>
 <div class="insight" id="targetInsight"></div>
 </div>
 
 <div class="card">
-<h2>⭐ 差评率 <span style="font-size:12px;color:#999;font-weight:400">近30天</span></h2>
+<h2>⭐ 差评率 <span style="font-size:12px;color:#999;font-weight:400">美团外卖+淘宝闪购 · 近30天</span></h2>
 <div class="insight" id="reviewInsight"></div>
 <div class="chart" id="chartReview"></div>
 <span class="toggle" onclick="toggle('reviewDetail',this)">▲ 收起明细</span>
@@ -77,7 +77,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 </div>
 
 <div class="card">
-<h2>🍽️ 菜品质量 <span style="font-size:12px;color:#999;font-weight:400">近7天 · 美团</span></h2>
+<h2>🍽️ 菜品质量 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 近7天</span></h2>
 <div class="insight" id="qualityInsight"></div>
 <div class="chart" id="chartQuality" style="height:300px"></div>
 <span class="toggle" onclick="toggle('qualityDetail',this)">▲ 收起明细</span>
@@ -87,7 +87,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 </div>
 
 <div class="card">
-<h2>🛡️ 食品安全 <span style="font-size:12px;color:#999;font-weight:400">近7天 · 美团</span></h2>
+<h2>🛡️ 食品安全 <span style="font-size:12px;color:#999;font-weight:400">美团外卖 · 近7天</span></h2>
 <div class="insight" id="foodInsight"></div>
 <div class="chart" id="chartFood" style="height:300px"></div>
 <span class="toggle" onclick="toggle('foodDetail',this)">▲ 收起明细</span>
@@ -97,7 +97,7 @@ th{background:#fafafa;color:#666;font-weight:600}
 </div>
 
 <div class="card">
-<h2>🏪 昨日收入排行</h2>
+<h2>🏪 昨日收入排行 <span style="font-size:12px;color:#999;font-weight:400">美团+淘闪+京东</span></h2>
 <div class="chart" id="chartStore" style="height:400px"></div>
 <span class="toggle" onclick="toggle('storeDetail',this)">▲ 收起明细</span>
 <div class="detail" id="storeDetail"><table>
@@ -147,10 +147,10 @@ function applyFilter(){
   var fAvg = (function(){var q=DATA.foodsafe.filter(f);return q.length?q.reduce(function(a,r){return a+r.食品安全负反馈率;},0)/q.length:0;})();
 
   document.getElementById("kpis").innerHTML = [
-    ["💰","昨日实收","¥"+Math.round(income).toLocaleString(),"三平台合计"],
-    ["📦","昨日订单",orders.toLocaleString()+"单","有效订单"],
-    ["⭐","差评率",pct(diffRate),"近30天 · 越低越好"],
-    ["🍽️","菜品质量",qAvg.toFixed(2)+"分","近7天 · 满分5分"],
+    ["💰","昨日实收","¥"+Math.round(income).toLocaleString(),"美团+淘闪+京东"],
+    ["📦","昨日订单",orders.toLocaleString()+"单","美团+淘闪 · 京东不计"],
+    ["⭐","差评率",pct(diffRate),"美团+淘闪 · 近30天"],
+    ["🍽️","菜品质量",qAvg.toFixed(2)+"分","美团 · 近7天"],
     ["🛡️","食安负反馈",fAvg.toFixed(1)+"%","近7天 · 越低越好"]
   ].map(function(k){
     return '<div class="kpi"><div class="icon">'+k[0]+'</div><div class="label">'+k[1]+'</div><div class="val">'+k[2]+'</div><div class="hint">'+k[3]+'</div></div>';

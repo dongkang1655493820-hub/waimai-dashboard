@@ -135,6 +135,10 @@ function initChart(id){
 function barColor(v, bad, warn){
   return v >= bad ? "#f5222d" : v >= warn ? "#faad14" : "#52c41a";
 }
+function fmtInt(x){
+  if(x===null||x===undefined||x===""||isNaN(Number(x))) return "-";
+  return Math.round(Number(x)).toLocaleString("en-US");
+}
 function gradeBadge(g){
   return '<span class="grade grade-'+g+'">'+g+'类</span>';
 }
@@ -167,7 +171,7 @@ function applyFilter(){
     ["📅","本月实收","¥1,681,211","10-01~10-08 · 三平台"],
     ["📊","本月订单","48,788单","10-01~10-08 · 三平台"],
     ["💰","昨日实收","¥"+Math.round(income).toLocaleString(),"美团+淘闪+京东"],
-    ["📦","昨日订单",orders.toLocaleString()+"单","美团+淘闪+京东"],
+    ["📦","昨日订单",fmtInt(orders)+"单","美团+淘闪+京东"],
     ["⭐","差评率",pct(diffRate),"美团+淘闪 · 09-08~10-08"],
     ["🍽️","菜品质量",qAvg.toFixed(2)+"分","美团 · 10-02~10-08"],
     ["🛡️","食安负反馈",fAvg.toFixed(1)+"%","美团 · 10-02~10-08"]
@@ -203,7 +207,7 @@ function applyFilter(){
   });
   document.getElementById("reviewTable").innerHTML = rs.map(function(r){
     var dot = r.差评率>=0.01?"dot-r":r.差评率>=0.005?"dot-y":"dot-g";
-    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+(r.有效订单数||"-").toLocaleString()+"</td><td>"+r.差评数+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+Math.round(r.回复率*100)+"%</td><td>"+gradeBadge(gradeReview(r.差评率))+"</td></tr>";
+    return "<tr><td><span class='dot "+dot+"'></span>"+shortName(r.店)+"</td><td>"+r.负责人+"</td><td>"+fmtInt(r.有效订单数)+"</td><td>"+fmtInt(r.差评数)+"</td><td><b>"+pct(r.差评率)+"</b></td><td>"+Math.round(r.回复率*100)+"%</td><td>"+gradeBadge(gradeReview(r.差评率))+"</td></tr>";
   }).join("");
 
   /* 质量分：从好到差（降序） */
@@ -259,7 +263,7 @@ function applyFilter(){
   });
   document.getElementById("storeTable").innerHTML = ss.map(function(s,i){
     var rc = i<3?"rank-"+(i+1):"";
-    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td><b>¥"+Math.round(s.收入).toLocaleString()+"</b></td><td>"+s.订单+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td><td>"+gradeBadge(gradeStore(s.到手率))+"</td></tr>";
+    return "<tr><td><span class='rank "+rc+"'>"+(i+1)+"</span></td><td>"+shortName(s.店)+"</td><td>"+s.负责人+"</td><td><b>¥"+Math.round(s.收入).toLocaleString()+"</b></td><td>"+fmtInt(s.订单)+"</td><td>"+(s.到手率*100).toFixed(1)+"%</td><td>"+gradeBadge(gradeStore(s.到手率))+"</td></tr>";
   }).join("");
 }
 
